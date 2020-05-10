@@ -1,58 +1,44 @@
 package com.gildedrose
 
-class GildedRose(val items: Array[Item]) {
+import scala.util.matching.Regex
 
+class GildedRose {
+  val BackstagePassesPattern: Regex = "(\\bBackstage passes\\b).*".r
+  val SulfurasPattern: Regex = "(\\bSulfuras\\b).*".r
+  val AgedBriePattern: Regex = "(\\bAged Brie\\b).*".r
 
-  def updateQuality() {
-    for (i <- 0 until items.length) {
-      if (!items(i).name.equals("Aged Brie")
-        && !items(i).name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-        if (items(i).quality > 0) {
-          if (!items(i).name.equals("Sulfuras, Hand of Ragnaros")) {
-            items(i).quality = items(i).quality - 1
-          }
-        }
-      } else {
-        if (items(i).quality < 50) {
-          items(i).quality = items(i).quality + 1
+  def calcSellIn(item: Item): Int = (item.name, item.sellIn) match {
+    case (SulfurasPattern(_*), sI) => sI
+    case (_, sI)                   => sI - 1
+  }
 
-          if (items(i).name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            if (items(i).sellIn < 11) {
-              if (items(i).quality < 50) {
-                items(i).quality = items(i).quality + 1
-              }
-            }
+  def updateQuality(items: List[Item]): List[Item] = {
+    items
+      .map(item => item.copy(sellIn = calcSellIn(item)))
+      .map(item => item.copy(quality = calcQuality(item)))
+      .map(item => item.copy(quality = fitQualityInBounds(item)))
+  }
 
-            if (items(i).sellIn < 6) {
-              if (items(i).quality < 50) {
-                items(i).quality = items(i).quality + 1
-              }
-            }
-          }
-        }
-      }
+  private def fitQualityInBounds(item: Item) = (item.name, item.quality) match {
+    case (SulfurasPattern(_*), q) => q
+    case (_, q) => Math.min(50, Math.max(0, q))
+  }
 
-      if (!items(i).name.equals("Sulfuras, Hand of Ragnaros")) {
-        items(i).sellIn = items(i).sellIn - 1
-      }
+  private def calcQuality(item: Item) = {
+    (item.name, item.sellIn) match {
+      case (BackstagePassesPattern(_*), sI) =>
+        if (sI < 0) 0
+        else if (sI < 5) item.quality + 3
+        else if (sI < 10) item.quality + 2
+        else item.quality + 1
 
-      if (items(i).sellIn < 0) {
-        if (!items(i).name.equals("Aged Brie")) {
-          if (!items(i).name.equals("Backstage passes to a TAFKAL80ETC concert")) {
-            if (items(i).quality > 0) {
-              if (!items(i).name.equals("Sulfuras, Hand of Ragnaros")) {
-                items(i).quality = items(i).quality - 1
-              }
-            }
-          } else {
-            items(i).quality = items(i).quality - items(i).quality
-          }
-        } else {
-          if (items(i).quality < 50) {
-            items(i).quality = items(i).quality + 1
-          }
-        }
-      }
+      case (SulfurasPattern(_*), _) => item.quality
+
+      case (AgedBriePattern(_*), sI) if (sI < 0)  => item.quality + 2
+      case (AgedBriePattern(_*), sI) if (sI >= 0) => item.quality + 1
+
+      case (_, sI) if (sI < 0)  => item.quality - 2
+      case (_, sI) if (sI >= 0) => item.quality - 1
     }
   }
 }
