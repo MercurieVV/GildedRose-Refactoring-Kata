@@ -35,16 +35,16 @@ class GildedRose {
 
       case (SulfurasPattern(_*), _) => item.quality
 
-      case (AgedBriePattern(_*), sI) => item.quality + changeQuality(sI) * -1
+      case (AgedBriePattern(_*), sI) => item.quality + qualityDiffDefault(sI) * -1
 
-      case (ConjuredPattern(_*), sI) => item.quality + changeQuality(sI) * 2
+      case (ConjuredPattern(_*), sI) => item.quality + qualityDiffDefault(sI) * 2
 
-      case (_, sI) => item.quality + changeQuality(sI)
+      case (_, sI) => item.quality + qualityDiffDefault(sI)
     }
   }
 
   private val defaultDiff = -1
-  private def changeQuality(sI: Int) =
+  private def qualityDiffDefault(sI: Int) =
     if (sI >= 0) defaultDiff else defaultDiff * 2
 
 }
