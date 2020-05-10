@@ -24,7 +24,7 @@ class GildedRosePBTest extends FunSuite with ScalaCheckPropertyChecks {
       )
     )
     sellIn <- Gen.choose(-100, 100)
-    quality <- Gen.choose(0, 50)
+    quality <- Gen.choose(-10, 60)
   } yield Item(name, sellIn, quality)
   val itemsGen: Gen[List[Item]] = Gen.listOf(itemGen)
 
