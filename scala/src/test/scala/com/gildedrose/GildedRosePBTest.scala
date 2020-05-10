@@ -20,6 +20,7 @@ class GildedRosePBTest extends FunSuite with ScalaCheckPropertyChecks {
         "Elixir of the Mongoose",
         "Sulfuras, Hand of Ragnaros",
         "Backstage passes to a TAFKAL80ETC concert",
+        "Conjured",
         "ololo unknown name"
       )
     )
@@ -47,6 +48,7 @@ class GildedRosePBTest extends FunSuite with ScalaCheckPropertyChecks {
       val BackstagePassesPattern = "(\\bBackstage passes\\b).*".r
       val SulfurasPattern = "(\\bSulfuras\\b).*".r
       val AgedBriePattern = "(\\bAged Brie\\b).*".r
+      val ConjuredPattern = "(\\bConjured\\b).*".r
       val expectedQualityWithDiff: Int => Int = expectedQualityWithinBounds(itemBefore.quality)
 
 
@@ -61,6 +63,9 @@ class GildedRosePBTest extends FunSuite with ScalaCheckPropertyChecks {
 
         case (AgedBriePattern(_*), sI) if (sI < 0) => assert(itemAfter.quality == expectedQualityWithDiff(2))
         case (AgedBriePattern(_*), sI)  if (sI >= 0) => assert(itemAfter.quality == expectedQualityWithDiff(1))
+
+        case (ConjuredPattern(_*), sI)  if (sI < 0) => assert(itemAfter.quality == expectedQualityWithDiff(-4))
+        case (ConjuredPattern(_*), sI)  if (sI >= 0) => assert(itemAfter.quality == expectedQualityWithDiff(-2))
 
         case (_, sI) if (sI < 0)      => assert(itemAfter.quality == expectedQualityWithDiff(-2))
         case (_, sI) if (sI >= 0)     => assert(itemAfter.quality == expectedQualityWithDiff(-1))

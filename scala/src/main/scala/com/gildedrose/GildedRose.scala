@@ -6,6 +6,7 @@ class GildedRose {
   val BackstagePassesPattern: Regex = "(\\bBackstage passes\\b).*".r
   val SulfurasPattern: Regex = "(\\bSulfuras\\b).*".r
   val AgedBriePattern: Regex = "(\\bAged Brie\\b).*".r
+  val ConjuredPattern = "(\\bConjured\\b).*".r
 
   def calcSellIn(item: Item): Int = (item.name, item.sellIn) match {
     case (SulfurasPattern(_*), sI) => sI
@@ -21,7 +22,7 @@ class GildedRose {
 
   private def fitQualityInBounds(item: Item) = (item.name, item.quality) match {
     case (SulfurasPattern(_*), q) => q
-    case (_, q) => Math.min(50, Math.max(0, q))
+    case (_, q)                   => Math.min(50, Math.max(0, q))
   }
 
   private def calcQuality(item: Item) = {
@@ -35,6 +36,8 @@ class GildedRose {
       case (SulfurasPattern(_*), _) => item.quality
 
       case (AgedBriePattern(_*), sI) => item.quality + changeQuality(sI) * -1
+
+      case (ConjuredPattern(_*), sI) => item.quality + changeQuality(sI) * 2
 
       case (_, sI) => item.quality + changeQuality(sI)
     }
