@@ -67,6 +67,11 @@ class GildedRosePBTest extends FunSuite with ScalaCheckPropertyChecks {
         case (_, sI) if (sI < 0)      => assert(itemAfter.quality == expectedQualityWithDiff(-2))
         case (_, sI) if (sI >= 0)     => assert(itemAfter.quality == expectedQualityWithDiff(-1))
       }
+
+      itemAfter.name match {
+        case SulfurasPattern(_*) => assert(itemAfter.sellIn == itemBefore.sellIn)
+        case _ => assert(itemAfter.sellIn == itemBefore.sellIn - 1)
+      }
     }
   }
 
