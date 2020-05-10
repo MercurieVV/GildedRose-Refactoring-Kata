@@ -30,20 +30,18 @@ class GildedRosePBTest extends FunSuite with ScalaCheckPropertyChecks {
 
   test("quality value bound conditions") {
     forAll(itemsGen) { items: List[Item] =>
-      val app = new GildedRose(items.toArray)
-      app.updateQuality()
-      items.foreach(item => {
+      val app = new GildedRose()
+      val updatedItems = app.updateQuality(items)
+      updatedItems.foreach(item => {
         assert(item.quality >= 0)
         assert(item.quality <= 50)
       })
     }
   }
   test("test changed props") {
-    forAll(itemGen, MinSuccessful(1000)) { itemBefore: Item =>
-      val items = Array(itemBefore.copy())
-      val app = new GildedRose(items.clone())
-      app.updateQuality()
-      val itemAfter = items(0)
+    forAll(itemGen, MinSuccessful(10000)) { itemBefore: Item =>
+      val app = new GildedRose()
+      val itemAfter = app.updateQuality(List(itemBefore))(0)
 
 
       val BackstagePassesPattern = "(\\bBackstage passes\\b).*".r

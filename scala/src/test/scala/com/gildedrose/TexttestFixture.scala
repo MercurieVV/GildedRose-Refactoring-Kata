@@ -2,7 +2,7 @@ package com.gildedrose
 
 object TexttestFixture {
   def main(args: Array[String]): Unit = {
-    val items = Array[Item](
+    var items = List[Item](
       new Item("+5 Dexterity Vest", 10, 20),
       new Item("Aged Brie", 2, 0),
       new Item("Elixir of the Mongoose", 5, 7),
@@ -14,7 +14,7 @@ object TexttestFixture {
       // this conjured item does not work properly yet
       new Item("Conjured Mana Cake", 3, 6)
     )
-    val app = new GildedRose(items)
+    val app = new GildedRose()
     val days = if (args.length > 0) args(0).toInt + 1 else 2
     for (i <- 0 until days) {
       System.out.println("-------- day " + i + " --------")
@@ -23,7 +23,7 @@ object TexttestFixture {
         System.out.println(item.name + ", " + item.sellIn + ", " + item.quality)
       }
       System.out.println()
-      app.updateQuality()
+      items = app.updateQuality(items)
     }
   }
 }
